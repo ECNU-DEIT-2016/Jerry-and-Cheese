@@ -15,7 +15,7 @@ Future<Null> main() async {
   renderLoop.addStage(stage);
 
   var resourceManager = new ResourceManager();
-  resourceManager.addBitmapData("dart", "images/dart@1x.png");
+  resourceManager.addBitmapData("dart", "images/mouse.png");
 
   await resourceManager.load();
 
