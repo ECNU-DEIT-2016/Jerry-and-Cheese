@@ -1,53 +1,85 @@
 import 'dart:async';
 import 'dart:html' as html;
 import 'package:stagexl/stagexl.dart';
-import 'dart:math';
+import 'dart:math' as math;
 
-Future<Null> main() async {
-  StageOptions options = new StageOptions()
-    ..backgroundColor = Color.White
-    ..renderEngine = RenderEngine.WebGL;
+Future main() async {
+
+  // configure StageXL default options.
+
+  StageXL.stageOptions.renderEngine = RenderEngine.WebGL;
+  StageXL.stageOptions.inputEventMode = InputEventMode.MouseAndTouch;
+  StageXL.stageOptions.backgroundColor = Color.White;
+
+  // init Stage and RenderLoop
 
   var canvas = html.querySelector('#stage');
-  var stage = new Stage(canvas, width: 1280, height: 800, options: options);
-
+  var stage = new Stage(canvas, width: 600, height: 600);
   var renderLoop = new RenderLoop();
   renderLoop.addStage(stage);
 
-  var resourceManager = new ResourceManager();
-  resourceManager.addBitmapData("dart", "images/mouse.png");
+  //画线
+  var arcsShape = new Shape();
+  var arcs = 'M 80 480 l 180 0 a25 90 -180 0 1 180 0 l 180 0';   
+  /*l 50 -25 a25 25 -30 0 1 50 -25 
+  l 50 -25 a25 25 -30 0 1 50 -25
+   l 50 -25 a25 25 -30 0 1 50 -25 180 125';*/
+  arcsShape.graphics.decodePath(arcs);
+  arcsShape.graphics.strokeColor(Color.Blue, 5);
+  stage.addChild(arcsShape);
 
+
+  // load resources
+
+  var resourceManager = new ResourceManager();
+  resourceManager.addBitmapData("flowers", "images/mouse1.png");
   await resourceManager.load();
 
-  var logoData = resourceManager.getBitmapData("dart");
-  var logo = new Sprite();
-  logo.addChild(new Bitmap(logoData));
+  var flowers = resourceManager.getBitmapData("flowers");
+  var flowersList = <BitmapData>[
+    new BitmapData.fromBitmapData(flowers, new Rectangle(0 * 128, 0, 128, 128)),
+    //new BitmapData.fromBitmapData(flowers, new Rectangle(1 * 128, 0, 128, 128)),
+    //new BitmapData.fromBitmapData(flowers, new Rectangle(2 * 128, 0, 128, 128)),
+  ];
 
-  logo.pivotX = logoData.width / 2;
-  logo.pivotY = logoData.height / 2;
+  // Create 100 random flowers around the center of the Stage
 
-  // Place it at top center.
-  logo.x = 1280 / 2;
-  logo.y = 0;
+  var random = new math.Random();
 
-  stage.addChild(logo);
+  for (var i = 0; i < 1; i++) {
 
-  // And let it fall.
-  var tween = stage.juggler.addTween(logo, 3, Transition.easeOutBounce);
-  tween.animate.y.to(800 / 2);
+    var bitmapData = flowersList[random.nextInt(1)];
+    var bitmap = new Bitmap(bitmapData);
+    bitmap.pivotX = 64;
+    bitmap.pivotY = 64;
 
-  // Add some interaction on mouse click.
-  Tween rotation;
-  logo.onMouseClick.listen((MouseEvent e) {
-    // Don't run more rotations at the same time.
-    if (rotation != null) return;
-    rotation = stage.juggler.addTween(logo, 0.5, Transition.easeInOutCubic);
-    rotation.animate.rotation.by(2 * pi);
-    rotation.onComplete = () => rotation = null;
-  });
-  logo.mouseCursor = MouseCursor.POINTER;
+    var sprite = new Sprite();
+    var randomRadius = random.nextDouble() * 200;
+    var randomAngle = random.nextDouble() * 2 * math.pi;
+    sprite.addChild(bitmap);
+    sprite.x = 300 + randomRadius * math.cos(randomAngle);
+    sprite.y = 300 + randomRadius * math.sin(randomAngle);
+    sprite.addTo(stage);
 
-  // See more examples:
-  // https://github.com/bp74/StageXL_Samples
-     
+    // add event handlers to start or stop dragging
+
+    void startDrag(Event e) {
+      stage.addChild(sprite); // bring to foreground
+      sprite.scaleX = sprite.scaleY = 1.0;
+      //sprite.filters.add(new ColorMatrixFilter.adjust(hue: -0.5));
+      sprite.startDrag(true);
+    }
+
+    void stopDrag(Event e) {
+      sprite.scaleX = sprite.scaleY = 1.0;
+      sprite.filters.clear();
+      sprite.stopDrag();
+    }
+
+    sprite.onMouseDown.listen(startDrag);
+    sprite.onTouchBegin.listen(startDrag);
+    sprite.onMouseUp.listen(stopDrag);
+    sprite.onTouchEnd.listen(stopDrag);
+    stage.onMouseLeave.listen(stopDrag);
+  }
 }
