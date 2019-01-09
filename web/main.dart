@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'package:stagexl/stagexl.dart';
 import 'dart:math' as math;
-
 Future main() async {
 
   // configure StageXL default options.
@@ -28,6 +27,12 @@ Future main() async {
   arcsShape.graphics.strokeColor(Color.Blue, 5);
   stage.addChild(arcsShape);
 
+  arcsShape.graphics.circle(100, 100, 60);
+  arcsShape.graphics.fillColor(Color.Blue);
+  stage.addChild(arcsShape);
+
+   //
+   
 
   // load resources
 
@@ -61,6 +66,8 @@ Future main() async {
     sprite.y = 300 + randomRadius * math.sin(randomAngle);
     sprite.addTo(stage);
 
+    //
+
     // add event handlers to start or stop dragging
 
     void startDrag(Event e) {
@@ -82,4 +89,23 @@ Future main() async {
     sprite.onTouchEnd.listen(stopDrag);
     stage.onMouseLeave.listen(stopDrag);
   }
+  var textField = new TextField();
+ textField.defaultTextFormat = new TextFormat('Spicy Rice',20, Color.Blue);
+textField.text = "初速度";
+textField.x = 10;
+textField.y = 10;
+textField.width = 100;
+textField.height = 50;
+textField.wordWrap = true;
+stage.addChild(textField);
+textField.defaultTextFormat = new TextFormat('Spicy Rice',20, Color.Blue);
+textField.text = "加速度";
+textField.x = 100;
+textField.y = 10;
+textField.width = 100;
+textField.height = 50;
+textField.wordWrap = true;
+stage.addChild(textField);
+
 }
+
