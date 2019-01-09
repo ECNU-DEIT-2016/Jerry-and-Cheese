@@ -23,3 +23,27 @@ canvas.stage-full-screen:fullscreen {
   position:fixed; top:0; right:0; bottom:0; left:0; margin:0;
   box-sizing:border-box; width:100%; height:100%; object-fit:contain;
 }
+.garbage{
+  display:table-cell;
+  vertical-align:middle;
+  position:absolute;
+  top:200px;
+  left:10px;
+  text-align:center;
+  background-color:red;
+  height:80px;
+  width:30px;
+}
+.ball{
+  position:absolute;
+  height:10px;
+  width:10px;
+  border-radius:50%;
+  background-color:blue;
+  transition:left 0.5s linear,
+    top 0.5s ease-in;
+}
+.run{
+  left:20px;
+  top:220px;
+}

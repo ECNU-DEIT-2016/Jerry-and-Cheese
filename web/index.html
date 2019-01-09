@@ -8,13 +8,31 @@
     <meta name="scaffolded-by" content="https://github.com/google/stagehand">
     <title>Jerry_and_Cheese</title>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="main.dart.js">
-     
-    </script>
+    <script defer src="main.dart.js"> </script>
+    <script type="text/javascript" src="js/function.js"></script>
 </head>
 
 <body class="stage-full-window">
-    <canvas id="stage" class="stage-full-window"></canvas>
-
+    <!---<canvas id="stage" class="stage-full-window"></canvas>
+    -->
+    <h1>点击空白处</h1>
+    <div class="garbage">垃圾桶</div>
 </body>
 </html>
+<script>
+    const body = document.documentElement;
+body.addEventListener('click',function(e){
+  let ball = document.createElement('div');
+  const left = e.clientX;
+  const top = e.clientY;
+  ball.classList.add("ball");
+  ball.style.left = left+"px";
+  ball.style.top = top+"px";
+  body.append(ball);
+  setTimeout(function(){
+    ball.style.left = "";
+    ball.style.top = "";
+    ball.classList.add("run");
+  },100);
+},false)
+</script>
